@@ -1,14 +1,23 @@
 """Central logging configuration for the calculator app.
 
-This module ensures a single logging configuration is applied once. Importing
-this module will configure the 'calculator' logger (and its children) to
-log to stdout with a simple formatter. It avoids adding duplicate handlers.
+Provides a single function, :func:`configure_logging`, that applies a
+stream-based handler and a consistent formatter to the ``calculator``
+logger. Importing this module will configure logging once. The function
+is idempotent and safe to call multiple times.
 """
 import logging
 import sys
 
 
 def configure_logging(level: int = logging.INFO) -> None:
+    """Configure the ``calculator`` logger to write to stdout.
+
+    The function is idempotent: calling it multiple times will not add
+    duplicate handlers.
+
+    Args:
+        level: The logging level to set on the configured logger.
+    """
     root_logger = logging.getLogger("calculator")
     # Only configure if no handlers are present to avoid duplicate logs
     if root_logger.handlers:
