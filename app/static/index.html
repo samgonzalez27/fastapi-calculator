@@ -1,33 +1,36 @@
 <!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Calculator UI</title>
-  </head>
-  <body>
+</head>
+
+<body>
     <h1>Calculator</h1>
-    <label>a: <input id="a" type="number" value="2" step="any"/></label>
-    <label>b: <input id="b" type="number" value="3" step="any"/></label>
+    <label>a: <input id="a" type="number" value="2" step="any" /></label>
+    <label>b: <input id="b" type="number" value="3" step="any" /></label>
     <select id="op">
-      <option value="add">+</option>
-      <option value="sub">-</option>
-      <option value="mul">*</option>
-      <option value="div">/</option>
+        <option value="add">+</option>
+        <option value="sub">-</option>
+        <option value="mul">*</option>
+        <option value="div">/</option>
     </select>
     <button id="go">Compute</button>
     <pre id="out"></pre>
 
     <script>
-      document.getElementById('go').addEventListener('click', async () => {
-        const a = document.getElementById('a').value
-        const b = document.getElementById('b').value
-        const op = document.getElementById('op').value
-        const url = `/${op}?a=${encodeURIComponent(a)}&b=${encodeURIComponent(b)}`
-        const res = await fetch(url)
-        const text = await res.text()
-        document.getElementById('out').textContent = `status: ${res.status}\n${text}`
-      })
+        document.getElementById('go').addEventListener('click', async () => {
+            const a = document.getElementById('a').value
+            const b = document.getElementById('b').value
+            const op = document.getElementById('op').value
+            const url = `/${op}?a=${encodeURIComponent(a)}&b=${encodeURIComponent(b)}`
+            const res = await fetch(url)
+            const text = await res.text()
+            document.getElementById('out').textContent = `status: ${res.status}\n${text}`
+        })
     </script>
-  </body>
+</body>
+
 </html>
