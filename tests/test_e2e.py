@@ -6,9 +6,14 @@ import httpx
 
 
 def start_uvicorn(port: int = 8001):
-    # Start uvicorn in a subprocess using the current Python interpreter to ensure
-    # the same environment is used.
-    cmd = [sys.executable, "-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", str(port)]
+    # Start uvicorn programmatically in a subprocess without the reloader so
+    # tests can reliably start and stop the server (reloaders spawn extra
+    # processes that make termination unreliable).
+    run_code = (
+        "import uvicorn; uvicorn.run(\"app.main:app\", host=\"127.0.0.1\", "
+        f"port={port}, reload=False)"
+    )
+    cmd = [sys.executable, "-c", run_code]
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return proc
 

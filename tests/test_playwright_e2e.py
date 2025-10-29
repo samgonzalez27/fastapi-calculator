@@ -7,7 +7,13 @@ import os
 
 
 def start_uvicorn(port: int = 8002):
-    cmd = [sys.executable, "-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", str(port)]
+    # Start uvicorn programmatically without reload so tests don't spawn a
+    # reloader process which can prevent clean shutdown.
+    run_code = (
+        "import uvicorn; uvicorn.run(\"app.main:app\", host=\"127.0.0.1\", "
+        f"port={port}, reload=False)"
+    )
+    cmd = [sys.executable, "-c", run_code]
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return proc
 
