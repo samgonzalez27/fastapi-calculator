@@ -1,19 +1,19 @@
-"""FastAPI calculator application with basic structured logging."""
-import logging
+"""FastAPI calculator application with centralized logging."""
 import time
+from pathlib import Path
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from .calculator import add, sub, mul, div
+from .logging_config import configure_logging
+
+# ensure logging is configured (idempotent)
+configure_logging()
+import logging
 
 logger = logging.getLogger("calculator")
-handler = logging.StreamHandler()
-formatter = logging.Formatter(
-    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-logger.setLevel(logging.INFO)
 
 
 class Operands(BaseModel):
@@ -22,6 +22,19 @@ class Operands(BaseModel):
 
 
 app = FastAPI()
+
+# serve a tiny static frontend so Playwright e2e tests can interact with a UI
+static_dir = Path(__file__).parent / "static"
+if static_dir.exists():
+    app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+
+
+@app.get("/")
+def read_index():
+    index = static_dir / "index.html"
+    if index.exists():
+        return FileResponse(index)
+    return {"status": "ok"}
 
 
 @app.on_event("startup")

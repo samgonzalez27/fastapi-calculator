@@ -26,9 +26,10 @@ def wait_for_server(url: str, timeout: float = 5.0):
             time.sleep(0.1)
 
 
-if os.environ.get("RUN_PLAYWRIGHT") != "1":
-    # Skip entire module unless explicitly enabled to avoid requiring Playwright/browser
-    pytest.skip("Playwright tests are opt-in. Set RUN_PLAYWRIGHT=1 to enable", allow_module_level=True)
+_skip_playwright = os.environ.get("RUN_PLAYWRIGHT") != "1"
+
+
+@pytest.mark.skipif(_skip_playwright, reason="Playwright tests are opt-in. Set RUN_PLAYWRIGHT=1 to enable")
 
 
 def test_playwright_ui_add_and_result():
